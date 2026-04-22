@@ -105,7 +105,7 @@ export default function InboxPanel({
     }
   };
 
-  const handleVoteSuccess = async (messageId: string) => {
+  const handleVoteSuccess = async (_messageId: string) => {
     // Refresh inbox after a successful vote — the backend fans out a vote_reply DM
     // to other participants, but the voter's own inbox just needs the read state.
     setExpandedId(null);

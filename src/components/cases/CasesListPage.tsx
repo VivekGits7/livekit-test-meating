@@ -5,7 +5,6 @@ import {
   LogOut,
   Bell,
   RefreshCw,
-  ArrowRight,
   Search,
   AlertTriangle,
   Shield,

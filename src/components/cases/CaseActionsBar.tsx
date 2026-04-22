@@ -215,7 +215,9 @@ export default function CaseActionsBar({
       <ConfirmDialog
         open={confirmStatus !== null}
         onClose={() => setConfirmStatus(null)}
-        onConfirm={() => confirmStatus && doUpdateStatus(confirmStatus)}
+        onConfirm={() => {
+          if (confirmStatus) return doUpdateStatus(confirmStatus);
+        }}
         title="Change case status?"
         description={
           confirmStatus
