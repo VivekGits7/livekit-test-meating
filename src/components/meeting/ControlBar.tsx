@@ -21,6 +21,11 @@ interface ControlBarProps {
 export default function ControlBar({ chatOpen, onToggleChat, onLeave }: ControlBarProps) {
   const { localParticipant } = useLocalParticipant();
 
+  // IMPORTANT: Leave must NEVER call `POST /api/meetings/{id}/end`.
+  // That endpoint marks the meeting as `completed` and triggers report generation —
+  // we reserve that for the LiveKit agent worker (it fires end logic only when every
+  // human has disconnected from the room). A user leaving just disconnects from
+  // LiveKit locally and navigates back in state — no backend mutation.
   const handleLeave = async () => {
     try {
       await localParticipant.setCameraEnabled(false);
@@ -42,7 +47,7 @@ export default function ControlBar({ chatOpen, onToggleChat, onLeave }: ControlB
       <button
         onClick={handleLeave}
         aria-label="Leave meeting"
-        className="flex h-11 items-center gap-2 rounded-full bg-[#ef4444] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#dc2626]"
+        className="flex h-11 cursor-pointer items-center gap-2 rounded-full bg-[#ef4444] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#dc2626] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ef4444]/40"
       >
         <PhoneOff className="h-4 w-4" />
         Leave
@@ -119,8 +124,9 @@ function ControlIconButton({
       aria-label={label}
       title={label}
       className={cn(
-        'flex h-11 w-11 items-center justify-center rounded-full transition-colors',
+        'flex h-11 w-11 cursor-pointer items-center justify-center rounded-full transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#10b981]/40',
+        'disabled:cursor-not-allowed disabled:opacity-50',
         active
           ? 'bg-[#1f2937] text-white hover:bg-[#262626]'
           : 'bg-[#ef4444]/20 text-[#f87171] hover:bg-[#ef4444]/30',

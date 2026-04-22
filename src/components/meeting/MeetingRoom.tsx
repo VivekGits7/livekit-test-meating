@@ -45,6 +45,9 @@ export default function MeetingRoom({ session, onLeave }: MeetingRoomProps) {
       video={true}
       audio={true}
       options={roomOptions}
+      // IMPORTANT: `onDisconnected` must NEVER call POST /api/meetings/{id}/end.
+      // That endpoint is reserved for the agent worker when the room fully empties.
+      // Here we only navigate back in local state via the parent's `onLeave` callback.
       onDisconnected={onLeave}
       onError={(err: Error) => setError(err.message || 'Could not connect to the room.')}
       className="h-full w-full bg-background"

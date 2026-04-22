@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useParticipants } from '@livekit/components-react';
-import { Users, Video, Radio } from 'lucide-react';
+import { Users, Video, Radio, UserPlus } from 'lucide-react';
 
 interface TopBarProps {
   roomName?: string;
+  canAddParticipant?: boolean;
+  onAddParticipant?: () => void;
 }
 
-export default function TopBar({ roomName }: TopBarProps) {
+export default function TopBar({
+  roomName,
+  canAddParticipant = false,
+  onAddParticipant,
+}: TopBarProps) {
   const participants = useParticipants();
   const [elapsed, setElapsed] = useState(0);
 
@@ -42,9 +48,21 @@ export default function TopBar({ roomName }: TopBarProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 rounded-lg border border-[#262626] bg-[#141414] px-3 py-1.5">
-        <Users className="h-3.5 w-3.5 text-[#a3a3a3]" />
-        <span className="text-xs font-medium text-white">{participants.length}</span>
+      <div className="flex items-center gap-2">
+        {canAddParticipant && onAddParticipant && (
+          <button
+            onClick={onAddParticipant}
+            className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#262626] bg-[#141414] px-3 py-1.5 text-xs font-medium text-white hover:border-[#10b981]/40 hover:bg-[#10b981]/10 hover:text-[#10b981]"
+          >
+            <UserPlus className="h-3.5 w-3.5" />
+            Add participant
+          </button>
+        )}
+
+        <div className="flex items-center gap-2 rounded-lg border border-[#262626] bg-[#141414] px-3 py-1.5">
+          <Users className="h-3.5 w-3.5 text-[#a3a3a3]" />
+          <span className="text-xs font-medium text-white">{participants.length}</span>
+        </div>
       </div>
     </div>
   );

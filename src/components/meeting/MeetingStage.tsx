@@ -11,6 +11,7 @@ import VideoGrid from './VideoGrid';
 import ControlBar from './ControlBar';
 import ChatPanel from './ChatPanel';
 import TopBar from './TopBar';
+import AddParticipantModal from '@/components/meetings/AddParticipantModal';
 import type { JoinSession } from '@/types/session';
 
 interface MeetingStageProps {
@@ -23,6 +24,7 @@ export default function MeetingStage({ session, onLeave }: MeetingStageProps) {
   const room = useRoomContext();
   const { localParticipant } = useLocalParticipant();
   const [chatOpen, setChatOpen] = useState(false);
+  const [addParticipantOpen, setAddParticipantOpen] = useState(false);
 
   // Apply display name as metadata once connected
   if (state === ConnectionState.Connected && localParticipant.name !== session.displayName) {
@@ -50,9 +52,15 @@ export default function MeetingStage({ session, onLeave }: MeetingStageProps) {
     );
   }
 
+  const canAddParticipant = Boolean(session.meetingId && session.backendToken);
+
   return (
     <div className="flex h-full w-full flex-col">
-      <TopBar roomName={room.name} />
+      <TopBar
+        roomName={room.name}
+        canAddParticipant={canAddParticipant}
+        onAddParticipant={() => setAddParticipantOpen(true)}
+      />
 
       <div className="relative flex flex-1 overflow-hidden">
         <div className="flex flex-1 flex-col overflow-hidden p-4">
@@ -89,6 +97,15 @@ export default function MeetingStage({ session, onLeave }: MeetingStageProps) {
         onToggleChat={() => setChatOpen((v) => !v)}
         onLeave={onLeave}
       />
+
+      {canAddParticipant && session.meetingId && session.backendToken && (
+        <AddParticipantModal
+          open={addParticipantOpen}
+          onClose={() => setAddParticipantOpen(false)}
+          meetingId={session.meetingId}
+          backendToken={session.backendToken}
+        />
+      )}
     </div>
   );
 }
